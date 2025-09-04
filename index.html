@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management System - UNILAG Presentation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --unilag-green: #1B5E20;
+            --unilag-gold: #72BCD4;
+            --unilag-dark-green: #0D3B0D;
+            --primary-gradient: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%);
+            --accent-gradient: linear-gradient(135deg, #72BCD4 0%, #72BCD4 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-primary: 0 25px 50px rgba(27, 94, 32, 0.3);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--accent-gradient);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 167, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(27, 94, 32, 0.05) 0%, transparent 50%);
+            animation: backgroundFloat 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes backgroundFloat {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(2deg);
+            }
+        }
+
+        .presentation-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 1400px;
+            height: 90vh;
+            min-height: 700px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-primary);
+            padding: 40px 60px;
+            display: none;
+            position: relative;
+            overflow-y: auto;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: translateY(0);
+            animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* UNILAG Header */
+        .unilag-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--unilag-gold);
+        }
+
+        .unilag-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 167, 38, 0.3);
+        }
+
+        .unilag-info h4 {
+            color: var(--unilag-green);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .unilag-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .slide-indicator {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            color: var(--unilag-green);
+            font-size: 0.9rem;
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .slide-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .author-info {
+            background: linear-gradient(135deg, rgba(27, 94, 32, 0.05) 0%, rgba(76, 175, 80, 0.05) 100%);
+            border: 1px solid rgba(27, 94, 32, 0.1);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .author-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-gradient);
+        }
+
+        .author-info h3 {
+            color: var(--unilag-green);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .author-info p {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .author-info strong {
+            color: var(--text-primary);
+        }
+
+        .content-section {
+            margin: 30px 0;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section h3 {
+            color: var(--unilag-green);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .content-section h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .content-section p,
+        .content-section li {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .objectives-list,
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .objectives-list li,
+        .features-list li {
+            padding: 15px 0;
+            padding-left: 50px;
+            position: relative;
+            border-bottom: 1px solid rgba(27, 94, 32, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .objectives-list li:hover,
+        .features-list li:hover {
+            background: rgba(27, 94, 32, 0.03);
+            border-radius: 8px;
+            border-bottom-color: transparent;
+        }
+
+        .objectives-list li::before,
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 15px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(255, 167, 38, 0.3);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(27, 94, 32, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-glass);
+            border: 1px solid var(--glass-border);
+        }
+
+        .results-table th {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .results-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(27, 94, 32, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .results-table tr:hover td {
+            background: rgba(27, 94, 32, 0.03);
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 16px;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #333;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 20px 0 #72BCD4, 40px 0 #27ca3f;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 167, 38, 0.1) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 25px;
+            border-radius: 16px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight::before {
+            content: '💡';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+        }
+
+        .highlight h4 {
+            color: var(--unilag-green);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        /* Interactive Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--unilag-green);
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-glass);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(27, 94, 32, 0.2);
+            color: var(--unilag-dark-green);
+        }
+
+        .nav-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn i {
+            font-size: 16px;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--unilag-green);
+            font-size: 18px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-glass);
+        }
+
+        .control-btn:hover {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(27, 94, 32, 0.2);
+            color: var(--unilag-dark-green);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1001;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent-gradient);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(255, 167, 38, 0.5);
+        }
+
+        /* Slide Overview Panel */
+        .overview-panel {
+            position: fixed;
+            left: -400px;
+            top: 0;
+            width: 350px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1002;
+            overflow-y: auto;
+        }
+
+        .overview-panel.open {
+            left: 0;
+        }
+
+        .overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--unilag-gold);
+        }
+
+        .overview-header h3 {
+            color: var(--unilag-green);
+            font-weight: 700;
+        }
+
+        .close-overview {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .slide-thumbnail {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .slide-thumbnail:hover {
+            border-color: var(--unilag-gold);
+            transform: translateX(5px);
+        }
+
+        .slide-thumbnail.active {
+            border-color: var(--unilag-green);
+            background: rgba(27, 94, 32, 0.05);
+        }
+
+        .slide-thumbnail h4 {
+            color: var(--unilag-green);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .slide-thumbnail p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 30px 40px;
+                height: 95vh;
+            }
+
+            .unilag-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tech-stack {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .presentation-container {
+                padding: 10px;
+            }
+
+            .slide {
+                padding: 20px 25px;
+                height: 95vh;
+                border-radius: 16px;
+            }
+
+            .logo-placeholder {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .results-table {
+                font-size: 0.9rem;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 12px 15px;
+            }
+
+            .navigation {
+                bottom: 20px;
+            }
+
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .control-panel {
+                top: 20px;
+                right: 20px;
+            }
+
+            .overview-panel {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                padding: 15px 20px;
+                height: 98vh;
+            }
+
+            .slide-title {
+                font-size: 1.8rem;
+            }
+
+            .slide-subtitle {
+                font-size: 1rem;
+            }
+
+            .content-section h3 {
+                font-size: 1.3rem;
+            }
+
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
+
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+
+            .navigation,
+            .control-panel,
+            .progress-container,
+            .overview-panel {
+                display: none !important;
+            }
+
+            .slide {
+                display: block !important;
+                page-break-after: always;
+                box-shadow: none;
+                border: none;
+                height: auto;
+                min-height: 0;
+            }
+
+            .slide:last-child {
+                page-break-after: auto;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--unilag-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button class="control-btn" id="overviewBtn" title="Slide Overview">
+            <i class="fas fa-th-list"></i>
+        </button>
+        <button class="control-btn" id="downloadBtn" title="Download as PDF">
+            <i class="fas fa-download"></i>
+        </button>
+        <button class="control-btn" id="fullscreenBtn" title="Toggle Fullscreen">
+            <i class="fas fa-expand"></i>
+        </button>
+        <button class="control-btn" id="themeBtn" title="Toggle Theme">
+            <i class="fas fa-palette"></i>
+        </button>
+    </div>
+
+    <!-- Slide Overview Panel -->
+    <div class="overview-panel" id="overviewPanel">
+        <div class="overview-header">
+            <h3>Slide Overview</h3>
+            <button class="close-overview" id="closeOverview">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="slideList">
+            <!-- Slide thumbnails will be generated here -->
+        </div>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span id="currentSlide">1</span> / <span id="totalSlides">13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Attendance Management System</h1>
+                <h2 class="slide-subtitle">Using the Command Design Pattern</h2>
+            </div>
+
+            <div class="author-info">
+                <h3>Prepared by:</h3>
+                <p><strong>IFEGBESAN, Tanitoluwa Samuel</strong></p>
+                <p>Student ID: 210805087</p>
+                <p>300 Level, Computer Sciences</p>
+                <p>University of Lagos, Nigeria</p>
+                <br>
+                <p><strong>Supervised by:</strong> Dr. Edagbami</p>
+                <p><strong>Date:</strong> 8th August, 2025</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Introduction & Problem Statement -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>2</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Introduction</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Background</h3>
+                <p>Traditional attendance tracking methods—paper registers, sign-in sheets, and spreadsheets—are
+                    increasingly inadequate due to:</p>
+                <ul class="objectives-list">
+                    <li>High vulnerability to human error (~15% error rate)</li>
+                    <li>Time inefficiency (~10 minutes per session)</li>
+                    <li>Limited analytical capabilities</li>
+                    <li>Poor scalability and maintenance challenges</li>
+                    <li>Lack of undo/redo functionality</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>Problem Statement</h3>
+                <p>Organizations need smarter attendance systems that provide automated tracking, real-time analytics,
+                    multi-role access, and modular architecture for future extensibility.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Objectives -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                    <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>3</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Project Objectives</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Primary Aim</h3>
+                <p>To design and implement an automated attendance management system using the Command Design Pattern to
+                    enhance modularity, maintainability, and flexibility.</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Specific Objectives</h3>
+                <ul class="objectives-list">
+                    <li>Reduce manual intervention in attendance tracking</li>
+                    <li>Apply the Command Pattern for encapsulating attendance operations</li>
+                    <li>Provide undo and redo functionality for attendance-related actions</li>
+                    <li>Generate real-time attendance analytics and reports</li>
+                    <li>Enable multi-role access (administrators, lecturers, students)</li>
+                    <li>Create a reusable SDK for cross-platform integration</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Literature Review -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>4</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Literature Review</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Current State of Attendance Systems</h3>
+                <p>Existing digital attendance systems face several architectural challenges:</p>
+                <ul class="objectives-list">
+                    <li>Rigid software architectures with poor modularity</li>
+                    <li>Limited scalability and maintenance difficulties</li>
+                    <li>Tight coupling to specific platforms or data formats</li>
+                    <li>Lack of advanced features like audit trails and undo operations</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>Knowledge Gap</h3>
+                <p>While the Command Design Pattern has proven valuable in GUI applications, transaction processors, and
+                    scheduling systems, its application in attendance management systems remains limited. This project
+                    bridges that gap by demonstrating practical implementation of design patterns in educational
+                    technology.</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Methodology - Command Pattern -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>5</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Methodology: Command Design Pattern</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Pattern Overview</h3>
+                <p>The Command Design Pattern encapsulates requests as objects, decoupling the sender from the receiver.
+                    Each attendance operation is implemented as a separate command object.</p>
+            </div>
+
+            <div class="content-section">
+                <h3>Core Components</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Command Interface</strong></td>
+                            <td>Defines Execute() and Undo() contracts</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Concrete Commands</strong></td>
+                            <td>MarkPresentCommand, MarkAbsentCommand, etc.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoker</strong></td>
+                            <td>Manages command execution and queuing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Receiver</strong></td>
+                            <td>Contains business logic and database operations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Client</strong></td>
+                            <td>User interfaces (dashboards, mobile apps)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 6: System Design -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>6</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">System Design & Architecture</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Benefits of Command Pattern Approach</h3>
+                <ul class="objectives-list">
+                    <li><strong>Decoupling:</strong> Isolates request issuers from execution logic</li>
+                    <li><strong>Undo/Redo:</strong> Built-in command history and reversal capability</li>
+                    <li><strong>Extensibility:</strong> New commands added without affecting existing code</li>
+                    <li><strong>Multi-role Support:</strong> Different access rights using same system logic</li>
+                    <li><strong>Queuing & Logging:</strong> Commands can be queued, logged, and audited</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>SDK Architecture</h3>
+                <p>The system is packaged as a .NET SDK for broad applicability across:</p>
+                <ul class="features-list">
+                    <li>Web applications (institutional portals)</li>
+                    <li>Mobile apps (real-time attendance marking)</li>
+                    <li>Enterprise software (HR/ERP systems)</li>
+                    <li>Microservices (containerized deployments)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Implementation -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>7</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Implementation</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Technology Stack</h3>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <i class="fas fa-server"
+                            style="font-size: 2rem; color: var(--unilag-green); margin-bottom: 10px;"></i>
+                        <br><strong>Backend</strong><br>
+                        ASP.NET Core (v6/7)
+                    </div>
+                    <div class="tech-item">
+                        <i class="fab fa-react"
+                            style="font-size: 2rem; color: var(--unilag-green); margin-bottom: 10px;"></i>
+                        <br><strong>Frontend</strong><br>
+                        React.js & React Native
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-database"
+                            style="font-size: 2rem; color: var(--unilag-green); margin-bottom: 10px;"></i>
+                        <br><strong>Database</strong><br>
+                        PostgreSQL & MongoDB
+                    </div>
+                    <div class="tech-item">
+                        <i class="fas fa-shield-alt"
+                            style="font-size: 2rem; color: var(--unilag-green); margin-bottom: 10px;"></i>
+                        <br><strong>Authentication</strong><br>
+                        JWT-Based Auth
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3>Command Implementation Example</h3>
+                <div class="code-block">
+                    public interface IAttendanceCommand<br />
+                    {<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; Task ExecuteAsync();<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; Task UndoAsync();<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; string CommandId { get; }<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; DateTime ExecutedAt { get; }<br />
+                    }<br />
+                    <br />
+                    public class MarkPresentCommand : BaseCommand<br />
+                    {<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; private readonly IAttendanceRepository _repository;<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; private readonly string _studentId;<br />
+                    &nbsp; &nbsp; &nbsp; &nbsp; private readonly string _sessionId;<br />
+                    <br />
+                    // Implementation details...<br />
+                    }<br />
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Features -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>8</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Features Implemented</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Core Functionality</h3>
+                <ul class="features-list">
+                    <li><strong>Mark Attendance:</strong> Lecturers can mark student attendance via dashboard or mobile
+                    </li>
+                    <li><strong>Undo/Redo Operations:</strong> Mistakes can be reversed using command history</li>
+                    <li><strong>Role-Based Access Control:</strong> Different interfaces for Admin, Lecturer, and
+                        Student roles</li>
+                    <li><strong>Real-Time Synchronization:</strong> Mobile and web clients stay synchronized</li>
+                    <li><strong>Multi-Platform SDK:</strong> Reusable across different institutional systems</li>
+                    <li><strong>Analytics Dashboard:</strong> Generate comprehensive attendance reports</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h4>Key Innovation</h4>
+                <p>The SDK-based architecture allows the attendance logic to be data-agnostic and platform-independent,
+                    working with any storage solution through dependency injection while maintaining sophisticated
+                    business logic.</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Results -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>9</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Results & Evaluation</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Performance Comparison</h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Before (Manual System)</th>
+                            <th>After (Proposed System)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Attendance Error Rate</td>
+                            <td>~15%</td>
+                            <td>&lt;2%</td>
+                        </tr>
+                        <tr>
+                            <td>Time per Session Logging</td>
+                            <td>~10 minutes</td>
+                            <td>&lt;30 seconds</td>
+                        </tr>
+                        <tr>
+                            <td>Undo Attendance Action</td>
+                            <td>Not Possible</td>
+                            <td>Fully Supported</td>
+                        </tr>
+                        <tr>
+                            <td>System Integration Effort</td>
+                            <td>High</td>
+                            <td>Low (SDK-based)</td>
+                        </tr>
+                        <tr>
+                            <td>Admin Analytics Visibility</td>
+                            <td>Low</td>
+                            <td>High</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h3>User Testing Results</h3>
+                <p>Testing conducted with 3 lecturers, 2 admins, and 10 students confirmed significant improvements in
+                    speed, accuracy, and overall user experience compared to traditional methods.</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: SDK Benefits -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>10</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">SDK Architecture Benefits</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Technical Advantages</h3>
+                <ul class="objectives-list">
+                    <li><strong>Data Agnostic:</strong> Works with any storage solution via dependency injection</li>
+                    <li><strong>Platform Independent:</strong> Integrates with web, mobile, and enterprise systems</li>
+                    <li><strong>No Data Lock-in:</strong> Applications retain full control over data management</li>
+                    <li><strong>Modularity:</strong> Each operation is encapsulated as a separate command</li>
+                    <li><strong>Reversibility:</strong> All operations can be undone through command history</li>
+                    <li><strong>Extensibility:</strong> New operations added without modifying existing code</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>Business Benefits</h3>
+                <ul class="features-list">
+                    <li>Reduces code duplication across multiple projects</li>
+                    <li>Enables standardized attendance handling across platforms</li>
+                    <li>Allows centralized updates and security patches</li>
+                    <li>Accelerates development by abstracting core logic</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: Conclusion -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>11</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Conclusion</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Project Achievements</h3>
+                <p>This project successfully demonstrated the effective application of the Command Design Pattern in
+                    developing a robust Attendance Management System. Key achievements include:</p>
+                <ul class="objectives-list">
+                    <li>Significant improvement in efficiency and accuracy</li>
+                    <li>Enhanced modularity and maintainability through design patterns</li>
+                    <li>Successful SDK packaging for broad applicability</li>
+                    <li>Comprehensive support for undo/redo operations</li>
+                    <li>Multi-role access control implementation</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <h3>Future-Ready Foundation</h3>
+                <p>The system provides a solid foundation for advanced features such as biometric integration, real-time
+                    analytics, LMS integration, and multi-tenant support.</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Recommendations -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>12</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Recommendations</h1>
+            </div>
+
+            <div class="content-section">
+                <h3>Future Development Priorities</h3>
+                <ul class="objectives-list">
+                    <li><strong>Real-Time Event Streaming:</strong> Implement SignalR/Kafka for live updates</li>
+                    <li><strong>Biometric Integration:</strong> Connect with fingerprint and facial recognition APIs
+                    </li>
+                    <li><strong>Enhanced Analytics:</strong> Add machine learning for pattern detection</li>
+                    <li><strong>Multi-Tenant Support:</strong> Extend SDK for multiple institutions</li>
+                    <li><strong>CI/CD Pipeline:</strong> Automate testing and deployment processes</li>
+                    <li><strong>Comprehensive Testing:</strong> Expand unit, integration, and E2E tests</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h4>Development Best Practices</h4>
+                <p>Continue emphasizing accessibility standards, comprehensive documentation, and developer support to
+                    facilitate SDK adoption across diverse educational and organizational environments.</p>
+            </div>
+        </div>
+
+        <!-- Slide 13: Thank You -->
+        <div class="slide">
+            <div class="unilag-header">
+                <div class="unilag-logo">
+                   <div class="logo-placeholder"><img width="70" src="./logo.png"/></div>
+                    <div class="unilag-info">
+                        <h4>University of Lagos</h4>
+                        <p>Akoka, Yaba - Lagos, Nigeria</p>
+                    </div>
+                </div>
+                <div class="slide-indicator">
+                    <span>13</span> / <span>13</span>
+                </div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Thank You</h1>
+            </div>
+
+            <div class="author-info">
+                <h3>Questions & Discussion</h3>
+                <br>
+                <p><strong>IFEGBESAN, Tanitoluwa Samuel</strong></p>
+                <p>Student ID: 210805087</p>
+                <p>300 Level, Computer Sciences</p>
+                <p>University of Lagos, Nigeria</p>
+                <br>
+                <p><strong>Supervised by:</strong> Dr. Edagbami</p>
+                <br>
+                <p><em>This presentation demonstrates how established design patterns can be applied to build robust,
+                        flexible, and future-ready systems for attendance management.</em></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">
+            <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <script>
+        // Global variables
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let isFullscreen = false;
+        let isDarkTheme = false;
+
+        // Slide data for overview
+        const slideData = [
+            { title: "Title Slide", subtitle: "Attendance Management System" },
+            { title: "Introduction", subtitle: "Background & Problem Statement" },
+            { title: "Project Objectives", subtitle: "Primary & Specific Goals" },
+            { title: "Literature Review", subtitle: "Current State & Knowledge Gap" },
+            { title: "Methodology", subtitle: "Command Design Pattern" },
+            { title: "System Design", subtitle: "Architecture & Benefits" },
+            { title: "Implementation", subtitle: "Technology Stack & Code" },
+            { title: "Features", subtitle: "Core Functionality" },
+            { title: "Results", subtitle: "Performance & Evaluation" },
+            { title: "SDK Benefits", subtitle: "Technical & Business Advantages" },
+            { title: "Conclusion", subtitle: "Achievements & Foundation" },
+            { title: "Recommendations", subtitle: "Future Development" },
+            { title: "Thank You", subtitle: "Questions & Discussion" }
+        ];
+
+        // Initialize presentation
+        function initPresentation() {
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1500);
+
+            // Set total slides
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            // Generate slide overview
+            generateSlideOverview();
+
+            // Show first slide
+            showSlide(0);
+
+            // Add keyboard listeners
+            addKeyboardListeners();
+
+            // Add touch gestures for mobile
+            addTouchGestures();
+
+            // Update progress bar
+            updateProgressBar();
+        }
+
+        // Generate slide overview panel
+        function generateSlideOverview() {
+            const slideList = document.getElementById('slideList');
+            slideList.innerHTML = '';
+
+            slideData.forEach((slide, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'slide-thumbnail';
+                thumbnail.innerHTML = `
+                    <h4>${index + 1}. ${slide.title}</h4>
+                    <p>${slide.subtitle}</p>
+                `;
+                thumbnail.addEventListener('click', () => {
+                    goToSlide(index);
+                    closeOverview();
+                });
+                slideList.appendChild(thumbnail);
+            });
+        }
+
+        // Show specific slide
+        function showSlide(index) {
+            // Remove active class from all slides
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+
+            // Update slide counter
+            document.getElementById('currentSlide').textContent = index + 1;
+            document.querySelectorAll('.slide-indicator span').forEach((span, i) => {
+                if (i % 2 === 0) span.textContent = index + 1;
+            });
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+
+            // Update progress bar
+            updateProgressBar();
+
+            // Update overview thumbnails
+            updateOverviewThumbnails();
+
+            // Animate slide content
+            animateSlideContent();
+        }
+
+        // Navigate slides
+        function changeSlide(direction) {
+            const newSlide = currentSlide + direction;
+            if (newSlide >= 0 && newSlide < totalSlides) {
+                currentSlide = newSlide;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Go to specific slide
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlide = index;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Update overview thumbnails
+        function updateOverviewThumbnails() {
+            const thumbnails = document.querySelectorAll('.slide-thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                thumb.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // Animate slide content
+        function animateSlideContent() {
+            const activeSlide = document.querySelector('.slide.active');
+            const elements = activeSlide.querySelectorAll('.content-section, .tech-item, .results-table tr');
+
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        // Keyboard navigation
+        function addKeyboardListeners() {
+            document.addEventListener('keydown', (e) => {
+                switch (e.key) {
+                    case 'ArrowRight':
+                    case ' ':
+                        if (!e.shiftKey) {
+                            e.preventDefault();
+                            changeSlide(1);
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        changeSlide(-1);
+                        break;
+                    case 'Home':
+                        e.preventDefault();
+                        goToSlide(0);
+                        break;
+                    case 'End':
+                        e.preventDefault();
+                        goToSlide(totalSlides - 1);
+                        break;
+                    case 'Escape':
+                        if (document.fullscreenElement) {
+                            exitFullscreen();
+                        }
+                        closeOverview();
+                        break;
+                    case 'o':
+                    case 'O':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            toggleOverview();
+                        }
+                        break;
+                    case 'f':
+                    case 'F':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            toggleFullscreen();
+                        }
+                        break;
+                }
+            });
+        }
+
+        // Touch gestures for mobile
+        function addTouchGestures() {
+            let startX = 0;
+            let startY = 0;
+            let endX = 0;
+            let endY = 0;
+
+            document.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                endY = e.changedTouches[0].clientY;
+
+                const deltaX = endX - startX;
+                const deltaY = endY - startY;
+
+                // Only trigger if horizontal swipe is dominant
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0) {
+                        changeSlide(-1); // Swipe right - previous slide
+                    } else {
+                        changeSlide(1);  // Swipe left - next slide
+                    }
+                }
+            });
+        }
+
+        // Control panel functions
+        function toggleOverview() {
+            const panel = document.getElementById('overviewPanel');
+            panel.classList.toggle('open');
+        }
+
+        function closeOverview() {
+            document.getElementById('overviewPanel').classList.remove('open');
+        }
+
+        function downloadPresentation() {
+            // Create a temporary link for download
+            const element = document.createElement('a');
+            const content = document.documentElement.outerHTML;
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            element.href = url;
+            element.download = 'UNILAG_Attendance_Management_Presentation.html';
+            element.click();
+
+            URL.revokeObjectURL(url);
+
+            // Show download notification
+            showNotification('Presentation downloaded successfully!', 'success');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+                document.getElementById('fullscreenBtn').innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('fullscreenBtn').innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+
+        function exitFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            const root = document.documentElement;
+
+            if (isDarkTheme) {
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2D3748 100%)');
+                root.style.setProperty('--text-primary', '#F7FAFC');
+                root.style.setProperty('--text-secondary', '#E2E8F0');
+                document.body.style.color = '#F7FAFC';
+                showNotification('Dark theme enabled', 'info');
+            } else {
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #4CAF50 100%)');
+                root.style.setProperty('--text-primary', '#1A1A1A');
+                root.style.setProperty('--text-secondary', '#666666');
+                document.body.style.color = '#1A1A1A';
+                showNotification('Light theme enabled', 'info');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 30px;
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: 600;
+                animation: slideInRight 0.3s ease-out;
+                transform: translateX(100%);
+            `;
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Auto-play functionality
+        let autoplayInterval;
+        let isAutoplay = false;
+
+        function toggleAutoplay() {
+            if (isAutoplay) {
+                clearInterval(autoplayInterval);
+                isAutoplay = false;
+                showNotification('Autoplay stopped', 'info');
+            } else {
+                isAutoplay = true;
+                autoplayInterval = setInterval(() => {
+                    if (currentSlide < totalSlides - 1) {
+                        changeSlide(1);
+                    } else {
+                        toggleAutoplay(); // Stop at the end
+                    }
+                }, 5000); // 5 seconds per slide
+                showNotification('Autoplay started (5s per slide)', 'success');
+            }
+        }
+
+        // Slide transitions with different effects
+        function setTransitionEffect(effect) {
+            const activeSlide = document.querySelector('.slide.active');
+
+            switch (effect) {
+                case 'fade':
+                    activeSlide.style.animation = 'fadeIn 0.8s ease-out';
+                    break;
+                case 'slideUp':
+                    activeSlide.style.animation = 'slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    break;
+                case 'zoom':
+                    activeSlide.style.animation = 'zoomIn 0.8s ease-out';
+                    break;
+                default:
+                    activeSlide.style.animation = 'slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
+        }
+
+        // Add zoom in animation
+        const zoomInKeyframes = `
+            @keyframes zoomIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                }
+                to {
+                    transform: translateX(0);
+                }
+            }
+        `;
+
+        // Inject additional keyframes
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = zoomInKeyframes;
+        document.head.appendChild(styleSheet);
+
+        // Event listeners for control buttons
+        document.getElementById('overviewBtn').addEventListener('click', toggleOverview);
+        document.getElementById('closeOverview').addEventListener('click', closeOverview);
+        document.getElementById('downloadBtn').addEventListener('click', downloadPresentation);
+        document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+        document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', () => {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                fullscreenBtn.title = 'Exit Fullscreen';
+            } else {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                fullscreenBtn.title = 'Enter Fullscreen';
+            }
+        });
+
+        // Add context menu for additional options
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showContextMenu(e.clientX, e.clientY);
+        });
+
+        function showContextMenu(x, y) {
+            // Remove existing context menu
+            const existingMenu = document.querySelector('.context-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+
+            const contextMenu = document.createElement('div');
+            contextMenu.className = 'context-menu';
+            contextMenu.style.cssText = `
+                position: fixed;
+                top: ${y}px;
+                left: ${x}px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 8px;
+                padding: 10px 0;
+                min-width: 200px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                z-index: 10001;
+                animation: fadeIn 0.2s ease-out;
+            `;
+
+            const menuItems = [
+                { label: 'Go to First Slide', action: () => goToSlide(0) },
+                { label: 'Go to Last Slide', action: () => goToSlide(totalSlides - 1) },
+                { label: 'Toggle Autoplay', action: toggleAutoplay },
+                { label: 'Download Presentation', action: downloadPresentation },
+                { label: 'Toggle Theme', action: toggleTheme },
+                { label: 'Print Slides', action: () => window.print() }
+            ];
+
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.style.cssText = `
+                    padding: 12px 20px;
+                    cursor: pointer;
+                    color: var(--text-primary);
+                    font-weight: 500;
+                    transition: background-color 0.2s ease;
+                `;
+                menuItem.textContent = item.label;
+
+                menuItem.addEventListener('mouseenter', () => {
+                    menuItem.style.background = 'var(--unilag-green)';
+                    menuItem.style.color = 'white';
+                });
+
+                menuItem.addEventListener('mouseleave', () => {
+                    menuItem.style.background = 'transparent';
+                    menuItem.style.color = 'var(--text-primary)';
+                });
+
+                menuItem.addEventListener('click', () => {
+                    item.action();
+                    contextMenu.remove();
+                });
+
+                contextMenu.appendChild(menuItem);
+            });
+
+            document.body.appendChild(contextMenu);
+
+            // Remove context menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', () => {
+                    contextMenu.remove();
+                }, { once: true });
+            }, 100);
+        }
+
+        // Mouse wheel navigation
+        let wheelTimeout;
+        document.addEventListener('wheel', (e) => {
+            clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+                if (e.deltaY > 0) {
+                    changeSlide(1); // Scroll down - next slide
+                } else if (e.deltaY < 0) {
+                    changeSlide(-1); // Scroll up - previous slide
+                }
+            }, 100);
+        }, { passive: true });
+
+        // Presentation timer
+        let presentationStartTime;
+        let timerInterval;
+        let isTimerRunning = false;
+
+        function startTimer() {
+            if (!isTimerRunning) {
+                presentationStartTime = Date.now();
+                isTimerRunning = true;
+
+                timerInterval = setInterval(updateTimer, 1000);
+                showNotification('Presentation timer started', 'success');
+            }
+        }
+
+        function stopTimer() {
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                showNotification('Presentation timer stopped', 'info');
+            }
+        }
+
+        function updateTimer() {
+            const elapsed = Date.now() - presentationStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+
+            const timerDisplay = document.getElementById('timerDisplay');
+            if (!timerDisplay) {
+                const timer = document.createElement('div');
+                timer.id = 'timerDisplay';
+                timer.style.cssText = `
+                    position: fixed;
+                    top: 30px;
+                    left: 30px;
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(20px);
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    border: 1px solid var(--glass-border);
+                    font-weight: 600;
+                    color: var(--unilag-green);
+                    font-size: 0.9rem;
+                    z-index: 1000;
+                `;
+                // document.body.appendChild(timer);
+            }
+
+            document.getElementById('timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize presentation when page loads
+        document.addEventListener('DOMContentLoaded', initPresentation);
+
+        // Auto-start timer when presentation begins
+        setTimeout(startTimer, 2000);
+
+        // Add smooth scrolling for slide content
+        function smoothScrollToTop() {
+            const activeSlide = document.querySelector('.slide.active');
+            if (activeSlide) {
+                activeSlide.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Override the changeSlide function to include smooth scrolling
+        const originalChangeSlide = changeSlide;
+        changeSlide = function (direction) {
+            originalChangeSlide(direction);
+            smoothScrollToTop();
+        };
+
+        // Add slide notes functionality (for presenter)
+        const slideNotes = {
+            0: "Welcome everyone to my presentation on the Attendance Management System. This project demonstrates the practical application of the Command Design Pattern in educational technology.",
+            1: "Traditional attendance systems have significant limitations. Manual processes are error-prone and time-consuming, with studies showing up to 15% error rates.",
+            2: "Our primary objective is to create a modular, maintainable system using established design patterns while providing modern features like undo/redo functionality.",
+            3: "Current research shows limited application of the Command Pattern in attendance systems, presenting an opportunity for innovation in educational technology.",
+            4: "The Command Pattern provides excellent separation of concerns, allowing us to encapsulate each attendance operation as a separate, reversible command.",
+            5: "Our SDK-based architecture ensures the system can be integrated across different platforms while maintaining consistency in business logic.",
+            6: "We've chosen modern, robust technologies that ensure scalability and maintainability. The tech stack supports both web and mobile implementations.",
+            7: "Key features include real-time synchronization, role-based access control, and comprehensive undo/redo operations for all attendance actions.",
+            8: "Testing results show dramatic improvements in both accuracy and efficiency compared to traditional manual systems.",
+            9: "The SDK architecture provides significant technical and business advantages, including data agnosticism and platform independence.",
+            10: "This project successfully demonstrates how design patterns can create robust, flexible systems that provide a foundation for future enhancements.",
+            11: "Future development should focus on real-time streaming, biometric integration, and enhanced analytics capabilities.",
+            12: "Thank you for your attention. I'm happy to answer any questions about the technical implementation or design decisions."
+        };
+
+        // Show presenter notes (press 'N' key)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'n' || e.key === 'N') {
+                showPresenterNotes();
+            }
+        });
+
+        function showPresenterNotes() {
+            const notes = slideNotes[currentSlide] || "No notes available for this slide.";
+
+            const noteModal = document.createElement('div');
+            noteModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10002;
+                animation: fadeIn 0.3s ease-out;
+            `;
+
+            const noteContent = document.createElement('div');
+            noteContent.style.cssText = `
+                background: white;
+                padding: 30px;
+                border-radius: 16px;
+                max-width: 600px;
+                max-height: 400px;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            `;
+
+            noteContent.innerHTML = `
+                <h3 style="color: var(--unilag-green); margin-bottom: 20px;">Slide ${currentSlide + 1} - Presenter Notes</h3>
+                <p style="line-height: 1.6; color: var(--text-secondary);">${notes}</p>
+                <button onclick="this.parentElement.parentElement.remove()" style="
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    background: var(--unilag-green);
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">Close</button>
+            `;
+
+            noteModal.appendChild(noteContent);
+            document.body.appendChild(noteModal);
+
+            noteModal.addEventListener('click', (e) => {
+                if (e.target === noteModal) {
+                    noteModal.remove();
+                }
+            });
+        }
+
+        // Performance optimization: Preload next slide content
+        function preloadSlideContent(slideIndex) {
+            if (slideIndex >= 0 && slideIndex < slides.length) {
+                const slide = slides[slideIndex];
+                const images = slide.querySelectorAll('img[data-src]');
+                images.forEach(img => {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                });
+            }
+        }
+
+        // Preload next slides
+        setInterval(() => {
+            preloadSlideContent(currentSlide + 1);
+            preloadSlideContent(currentSlide + 2);
+        }, 1000);
+
+        console.log('🎓 UNILAG Attendance Management System Presentation Loaded Successfully!');
+        console.log('⌨️  Keyboard shortcuts:');
+        console.log('   → / Space: Next slide');
+        console.log('   ←: Previous slide');
+        console.log('   Home: First slide');
+        console.log('   End: Last slide');
+        console.log('   N: Show presenter notes');
+        console.log('   Ctrl+O: Toggle overview');
+        console.log('   Ctrl+F: Toggle fullscreen');
+        console.log('   Esc: Exit fullscreen / Close panels');
+    </script>
+</body>
+
+</html>
