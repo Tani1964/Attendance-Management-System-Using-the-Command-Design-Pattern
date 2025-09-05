@@ -82,7 +82,7 @@
   </g>
   
   <!-- Invoker -->
-  <g id="invoker">
+  <!-- <g id="invoker">
     <rect x="50" y="480" width="200" height="120" fill="#fff8e1" stroke="#ffc107" stroke-width="2"/>
     <text x="150" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold">CommandInvoker</text>
     <line x1="50" y1="510" x2="250" y2="510" stroke="#ffc107"/>
@@ -93,11 +93,11 @@
     <text x="60" y="572" font-family="Arial, sans-serif" font-size="11">+ UndoLastCommand(): void</text>
     <text x="60" y="584" font-family="Arial, sans-serif" font-size="11">+ QueueCommand(cmd: ICommand): void</text>
     <text x="60" y="596" font-family="Arial, sans-serif" font-size="11">+ ProcessQueue(): void</text>
-  </g>
+  </g> -->
   
   <!-- Receiver -->
   <g id="receiver">
-    <rect x="350" y="480" width="220" height="120" fill="#f1f8e9" stroke="#689f38" stroke-width="2"/>
+    <rect x="350" y="480" width="230" height="120" fill="#f1f8e9" stroke="#689f38" stroke-width="2"/>
     <text x="460" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold">AttendanceService</text>
     <line x1="350" y1="510" x2="570" y2="510" stroke="#689f38"/>
     <text x="360" y="525" font-family="Arial, sans-serif" font-size="11">- repository: IAttendanceRepository</text>
@@ -111,7 +111,7 @@
   
   <!-- Client -->
   <g id="client">
-    <rect x="650" y="480" width="200" height="120" fill="#fce4ec" stroke="#e91e63" stroke-width="2"/>
+    <rect x="650" y="480" width="220" height="120" fill="#fce4ec" stroke="#e91e63" stroke-width="2"/>
     <text x="750" y="500" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold">Client</text>
     <text x="750" y="515" text-anchor="middle" font-family="Arial, sans-serif" font-size="10">(Dashboard/Mobile App)</text>
     <line x1="650" y1="520" x2="850" y2="520" stroke="#e91e63"/>
@@ -134,16 +134,16 @@
   <line x1="500" y1="280" x2="750" y2="330" stroke="#ff9800" stroke-width="2" fill="none" marker-end="url(#hollow-triangle)"/>
   
   <!-- Invoker to ICommand (uses) -->
-  <line x1="250" y1="540" x2="350" y2="540" stroke="#666" stroke-width="1" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)"/>
-  <text x="300" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">uses</text>
+  <!-- <line x1="250" y1="540" x2="350" y2="540" stroke="#666" stroke-width="1" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)"/>
+  <text x="300" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">uses</text> -->
   
   <!-- BaseCommand to AttendanceService (has-a) -->
   <line x1="450" y1="280" x2="460" y2="480" stroke="#666" stroke-width="1" fill="none" marker-end="url(#diamond)"/>
   <text x="420" y="380" font-family="Arial, sans-serif" font-size="10" fill="#666">has</text>
   
   <!-- Client to CommandInvoker (uses) -->
-  <line x1="650" y1="540" x2="250" y2="540" stroke="#666" stroke-width="1" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)"/>
-  <text x="450" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">creates &amp; invokes</text>
+  <!-- <line x1="650" y1="540" x2="250" y2="540" stroke="#666" stroke-width="1" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)"/>
+  <text x="450" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">creates &amp; invokes</text> -->
   
   <!-- Client to AttendanceService (uses) -->
   <line x1="650" y1="560" x2="570" y2="560" stroke="#666" stroke-width="1" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)"/>
@@ -164,7 +164,7 @@
   
   <!-- Legend -->
   <g id="legend">
-    <rect x="50" y="630" width="800" height="60" fill="white" stroke="#ddd" stroke-width="1"/>
+    <rect x="25" y="630" width="850" height="60" fill="white" stroke="#ddd" stroke-width="1"/>
     <text x="60" y="645" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Legend:</text>
     
     <line x1="60" y1="655" x2="80" y2="655" stroke="#666" stroke-width="2" marker-end="url(#hollow-triangle)"/>
